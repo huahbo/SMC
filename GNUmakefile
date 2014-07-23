@@ -13,6 +13,8 @@ COMP := GNU
 # COMP := PGI
 # COMP := Cray
 
+K_USE_AUTOMATIC := t
+
 ### 
 ifdef MPI
   # Set USE_MPI_WRAPPERS := t to use mpif90, 
@@ -77,6 +79,12 @@ libraries =
 
 fpp_flags =
 fld_flags =
+
+ifdef K_USE_AUTOMATIC
+  F90PPFLAGS += -DK_USE_AUTOMATIC
+else
+  F90PPFLAGS =
+endif
 
 ifeq ($(wildcard comps/$(COMP).mak),)
    $(error "comps/$(COMP).mak does not exist")   
