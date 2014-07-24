@@ -10,12 +10,10 @@ NDEBUG := t
 ### Edit compiler options in comps/$(COMP).mak
 COMP := GNU
 # COMP := Intel
-# COMP := PGI
-# COMP := Cray
 
 ### 
 ifdef MPI
-  # Set USE_MPI_WRAPPERS := t to use mpif90, 
+  # Set USE_MPI_WRAPPERS := t to use mpif90 or mpiifot, 
   # otherwise you need to specify mpi_include_dir, mpi_lib_dir, and mpi_libraries.
   USE_MPI_WRAPPERS := t
   ifndef USE_MPI_WRAPPERS
@@ -82,12 +80,6 @@ ifeq ($(wildcard comps/$(COMP).mak),)
    $(error "comps/$(COMP).mak does not exist")   
 else 
   include comps/$(COMP).mak
-endif
-
-ifdef MPI
-ifdef USE_MPI_WRAPPERS
-    F90 = mpif90
-endif
 endif
 
 ifdef mpi_include_dir

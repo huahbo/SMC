@@ -4,6 +4,12 @@
   F90 := gfortran
   CC  := gcc
 
+  ifdef MPI
+  ifdef USE_MPI_WRAPPERS
+    F90 = mpif90
+  endif
+  endif
+
   F90FLAGS += -J$(mdir) -I $(mdir)
   FFLAGS   += -J$(mdir) -I $(mdir)
   CFLAGS   += -std=c99 -Wall
