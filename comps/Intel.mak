@@ -12,6 +12,12 @@
       CFLAGS   += -openmp -openmp-report2
     endif
 
+    ifdef MIC
+      FFLAGS   += -mmic
+      F90FLAGS += -mmic
+      CFLAGS   += -mmic
+    endif
+
     ifdef NDEBUG
       F90FLAGS += -O3
       FFLAGS   += -O3
