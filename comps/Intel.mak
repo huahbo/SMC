@@ -2,6 +2,12 @@
     FC  := ifort
     CC  := icc
 
+    ifdef MPI
+    ifdef USE_MPI_WRAPPERS
+      F90 = mpiifort
+    endif
+    endif
+
     FFLAGS   = -module $(mdir) -I $(mdir)
     F90FLAGS = -module $(mdir) -I $(mdir)
     CFLAGS   = -std=c99
