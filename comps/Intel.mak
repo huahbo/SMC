@@ -2,6 +2,12 @@
     FC  := ifort
     CC  := icc
 
+    ifdef MPI
+    ifdef USE_MPI_WRAPPERS
+      F90 = mpiifort
+    endif
+    endif
+
     FFLAGS   = -module $(mdir) -I $(mdir)
     F90FLAGS = -module $(mdir) -I $(mdir)
     CFLAGS   = -std=c99
@@ -10,6 +16,12 @@
       FFLAGS   += -openmp -openmp-report2
       F90FLAGS += -openmp -openmp-report2
       CFLAGS   += -openmp -openmp-report2
+    endif
+
+    ifdef MIC
+      FFLAGS   += -mmic
+      F90FLAGS += -mmic
+      CFLAGS   += -mmic
     endif
 
     ifdef NDEBUG
