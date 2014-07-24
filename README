@@ -15,7 +15,8 @@ can also be built with pure MPI, or pure OpenMP, or neither.
 GNU make is used to build the code.  The following options can be
 specified in the GNUmakefile:
 
-* MPI := t This determines whether we are using the Message Passing
+* MPI := t 
+  This determines whether we are using the Message Passing
   Interface (MPI) library.  Leaving this option empty will disable
   MPI.  If MPI is enabled, you need to specify how to link to the MPI
   library.  You can set USE_MPI_WRAPPERS := t, then mpif90 will be
@@ -34,6 +35,9 @@ specified in the GNUmakefile:
 * COMP := GNU
   Set this to your compiler of choice (e.g., GNU).  Specific options
   for a certain compiler are stored in the comps/$(COMP).mak file.   
+
+* MIC :=
+  Set this if compiling for Intel Xeon Phi.
 
 * MKVERBOSE := t
   This determines the verbosity of the building process.
