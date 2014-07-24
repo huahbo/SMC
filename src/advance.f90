@@ -10,6 +10,12 @@ module advance_module
 
   implicit none
 
+  double precision, save, public :: wt_fillboundary = 0.d0
+  double precision, save, public :: wt_ctoprim = 0.d0
+  double precision, save, public :: wt_chemterm = 0.d0
+  double precision, save, public :: wt_transprop = 0.d0
+  double precision, save, public :: wt_hypdiff = 0.d0
+
   private
   public advance
 
@@ -175,6 +181,8 @@ contains
     integer :: qlo(4), qhi(4), uplo(4), uphi(4), ulo(4), uhi(4)
     double precision, pointer, dimension(:,:,:,:) :: up, qp, mup, xip, lamp, Ddp, upp
 
+    double precision :: wt1, wt2
+
     update_courno = .false.
     if (present(courno) .and. present(istep) .and. fixed_dt.le.0.d0) then
        if (mod(istep,cfl_int).eq.1 .or. cfl_int.le.1) then
@@ -182,14 +190,18 @@ contains
        end if
     end if
 
+    wt1 = parallel_wtime()
     call multifab_fill_boundary(U)
+    wt_fillboundary = wt_fillboundary + (parallel_wtime()-wt1)
 
     call tb_multifab_setval(Uprime, 0.d0)
 
     !
     ! Calculate primitive variables based on U
     !
+    wt1 = parallel_wtime()
     call ctoprim(U, Q)
+    wt_ctoprim = wt_ctoprim + (parallel_wtime()-wt1)
 
     if (update_courno) then
        courno_proc = -1.d50
@@ -199,6 +211,7 @@ contains
     ! 
     ! chemistry
     !
+    wt1 = parallel_wtime()
     do n=1,nfabs(Q)
 
        qp  => dataptr(Q,n)
@@ -214,11 +227,15 @@ contains
 
        call chemterm_3d(lo,hi,qp,qlo(1:3),qhi(1:3),upp,uplo(1:3),uphi(1:3))
     end do
+    wt2 = parallel_wtime()
+    wt_chemterm = wt_chemterm + (wt2-wt1)
 
     !
     ! transport coefficients
     !
     call get_transport_properties(Q, mu, xi, lam, Ddiag)
+    wt1 = parallel_wtime()
+    wt_transprop = wt_transprop + (wt1-wt2)
 
     !
     ! Hyperbolic and Transport terms
@@ -258,6 +275,8 @@ contains
 
     end do
     !$omp end parallel
+    wt2 = parallel_wtime()
+    wt_hypdiff = wt_hypdiff + (wt2-wt1)
 
     if (update_courno) then
        call parallel_reduce(courno, courno_proc, MPI_MAX)
