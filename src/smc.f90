@@ -16,12 +16,12 @@ subroutine smc()
 
   implicit none
 
-  integer :: init_step, istep
+  integer :: init_step, istep, ioproc
 
   real(dp_t) :: dt, courno
   real(dp_t)  , pointer     :: dx(:)
 
-  real(dp_t) :: wt1, wt2, wt_advance
+  real(dp_t) :: wt1, wt2, wt_advance, wt_fb, wt_c2p, wt_c, wt_t, wt_hd
   type(layout)   :: la
   type(multifab) :: U
 
@@ -109,11 +109,22 @@ subroutine smc()
 
   deallocate(dx)
 
-  call parallel_reduce(wt_advance, wt2-wt1, MPI_MAX, proc = parallel_IOProcessorNode())
+  ioproc = parallel_IOProcessorNode()
+  call parallel_reduce(wt_advance, wt2-wt1        , MPI_MAX, proc=ioproc)
+  call parallel_reduce(wt_fb     , wt_fillboundary, MPI_MAX, proc=ioproc)
+  call parallel_reduce(wt_c2p    , wt_ctoprim     , MPI_MAX, proc=ioproc)
+  call parallel_reduce(wt_c      , wt_chemterm    , MPI_MAX, proc=ioproc)
+  call parallel_reduce(wt_t      , wt_transprop   , MPI_MAX, proc=ioproc)
+  call parallel_reduce(wt_hd     , wt_hypdiff     , MPI_MAX, proc=ioproc)
 
   if (parallel_IOProcessor()) then
      print*, ' '
      print*, 'SMC Advance Time = ', wt_advance
+     print*, '  fill boundary Time = ', wt_fb
+     print*, '  ctoprim       Time = ', wt_c2p
+     print*, '  chemterm      Time = ', wt_c
+     print*, '  transprop     Time = ', wt_t
+     print*, '  hyper & diff  Time = ', wt_hd
      print*, ' '
   end if
 
