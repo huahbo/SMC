@@ -11,6 +11,8 @@ NDEBUG := t
 COMP := GNU
 # COMP := Intel
 
+K_USE_AUTOMATIC := t
+
 ### 
 ifdef MPI
   # Set USE_MPI_WRAPPERS := t to use mpif90 or mpiifort, 
