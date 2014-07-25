@@ -267,9 +267,10 @@ contains
 
           call narrow_diffterm_3d(lo,hi,dx,qp,qlo(1:3),qhi(1:3),upp,uplo(1:3),uphi(1:3), &
                mup,xip,lamp,Ddp)
-
+       
           call hypterm_3d(lo,hi,dx,up,ulo(1:3),uhi(1:3),qp,qlo(1:3),qhi(1:3),&
                upp,uplo(1:3),uphi(1:3))
+
        end do
 
     end do
