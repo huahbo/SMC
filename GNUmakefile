@@ -78,6 +78,12 @@ libraries =
 fpp_flags =
 fld_flags =
 
+ifdef K_USE_AUTOMATIC
+  F90PPFLAGS += -DK_USE_AUTOMATIC
+else
+  F90PPFLAGS =
+endif
+
 ifeq ($(wildcard comps/$(COMP).mak),)
    $(error "comps/$(COMP).mak does not exist")   
 else 
